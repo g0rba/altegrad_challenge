@@ -1,7 +1,7 @@
 import operator
 from collections import Counter
 
-from tools import create_submission, load_data
+from tools import create_submission, load_data, create_address_books
 
 ##########################
 # load some of the files #
@@ -14,42 +14,7 @@ training, training_info, test, test_info = load_data(path_to_data)
 # create some handy structures #                    
 ################################
 
-# convert training set to dictionary
-emails_ids_per_sender = {}
-for index, series in training.iterrows():
-    row = series.tolist()
-    sender = row[0]
-    ids = row[1:][0].split(' ')
-    emails_ids_per_sender[sender] = ids
-
-# save all unique sender names
-all_senders = emails_ids_per_sender.keys()
-
-# create address book with frequency information for each user
-address_books = {}
-for sender, email_ids_sender in emails_ids_per_sender.items():
-    # cast email ids into int
-    list_ids_sender = [int(id_) for id_ in email_ids_sender]
-    # get subset of messages sent by this user
-    messages_sender = training_info[training_info["mid"].isin(list_ids_sender)]
-    # retrieve recipients of those messages
-    recipients_sender = [recipient for recipients in messages_sender["recipients"] for recipient in
-                         recipients.split(" ") if "@" in recipient]
-    # compute occurrence of recipients
-    rec_occ = dict(Counter(recipients_sender))
-    # order by frequency
-    sorted_rec_occ = sorted(rec_occ.items(), key=operator.itemgetter(1), reverse=True)
-    # save into dictionnary
-    address_books[sender] = sorted_rec_occ
-
-# save all unique recipient names    
-all_recs = list(set([elt[0] for sublist in address_books.values() for elt in sublist]))
-
-# save all unique user names 
-all_users = []
-all_users.extend(all_senders)
-all_users.extend(all_recs)
-all_users = list(set(all_users))
+address_books = create_address_books(training, training_info)
 
 #############
 # baselines #                           

@@ -1,5 +1,7 @@
 import time
 import pandas as pd
+from collections import Counter
+import operator
 
 
 def load_data(path_to_data="../data/"):
@@ -28,3 +30,35 @@ def create_submission(predictions_per_sender, folder="../results", file_name=Non
             for index, my_preds in enumerate(predictions):
                 s_to_write = str(ids[index]) + ',' + ' '.join(my_preds) + '\n'
                 my_file.write(s_to_write.encode())
+
+
+def create_address_books(training, training_info):
+    # convert training set to dictionary
+    emails_ids_per_sender = {}
+    for index, series in training.iterrows():
+        row = series.tolist()
+        sender = row[0]
+        ids = row[1:][0].split(' ')
+        emails_ids_per_sender[sender] = ids
+
+    # save all unique sender names
+    all_senders = emails_ids_per_sender.keys()
+
+    # create address book with frequency information for each user
+    address_books = {}
+    for sender, email_ids_sender in emails_ids_per_sender.items():
+        # cast email ids into int
+        list_ids_sender = [int(id_) for id_ in email_ids_sender]
+        # get subset of messages sent by this user
+        messages_sender = training_info[training_info["mid"].isin(list_ids_sender)]
+        # retrieve recipients of those messages
+        recipients_sender = [recipient for recipients in messages_sender["recipients"] for recipient in
+                             recipients.split(" ") if "@" in recipient]
+        # compute occurrence of recipients
+        rec_occ = dict(Counter(recipients_sender))
+        # order by frequency
+        sorted_rec_occ = sorted(rec_occ.items(), key=operator.itemgetter(1), reverse=True)
+        # save into dictionary
+        address_books[sender] = sorted_rec_occ
+
+    return address_books
