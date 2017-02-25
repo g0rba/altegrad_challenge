@@ -1,7 +1,4 @@
-import operator
-from collections import Counter
-
-from tools import create_submission, load_data, create_address_books
+from tools import create_submission, load_data
 from models import FrequencyModel
 
 # load data
