@@ -1,21 +1,14 @@
-import random
 import operator
-import pandas as pd
 from collections import Counter
 
-from tools import create_submission
+from tools import create_submission, load_data
+
+##########################
+# load some of the files #
+##########################
 
 path_to_data = "../data/"
-
-##########################
-# load some of the files #                           
-##########################
-
-training = pd.read_csv(path_to_data + 'training_set.csv', sep=',', header=0)
-
-training_info = pd.read_csv(path_to_data + 'training_info.csv', sep=',', header=0)
-
-test = pd.read_csv(path_to_data + 'test_set.csv', sep=',', header=0)
+training, training_info, test, test_info = load_data(path_to_data)
 
 ################################
 # create some handy structures #                    
@@ -40,7 +33,8 @@ for sender, email_ids_sender in emails_ids_per_sender.items():
     # get subset of messages sent by this user
     messages_sender = training_info[training_info["mid"].isin(list_ids_sender)]
     # retrieve recipients of those messages
-    recipients_sender = [recipient for recipients in messages_sender["recipients"] for recipient in recipients.split(" ") if "@" in recipient]
+    recipients_sender = [recipient for recipients in messages_sender["recipients"] for recipient in
+                         recipients.split(" ") if "@" in recipient]
     # compute occurrence of recipients
     rec_occ = dict(Counter(recipients_sender))
     # order by frequency

@@ -1,4 +1,14 @@
 import time
+import pandas as pd
+
+
+def load_data(path_to_data="../data/"):
+    training = pd.read_csv(path_to_data + 'training_set.csv', sep=',', header=0)
+    training_info = pd.read_csv(path_to_data + 'training_info.csv', sep=',', header=0)
+    test = pd.read_csv(path_to_data + 'test_set.csv', sep=',', header=0)
+    test_info = pd.read_csv(path_to_data + 'test_info.csv', sep=',', header=0)
+
+    return training, training_info, test, test_info
 
 
 def create_submission(predictions_per_sender, folder="../results", file_name=None):
