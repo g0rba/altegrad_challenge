@@ -1,5 +1,6 @@
 import time
 import pandas as pd
+import numpy as np
 from collections import Counter
 import operator
 
@@ -62,3 +63,18 @@ def create_address_books(training, training_info):
         address_books[sender] = sorted_rec_occ
 
     return address_books
+
+
+def cosine_similarity(u, v, eps=1e-10):
+    # flat arrays
+    u_flatten = u.flatten()
+    v_flatten = v.flatten()
+
+    # compute norms
+    u_norm = np.linalg.norm(u, ord=2)
+    v_norm = np.linalg.norm(v, ord=2)
+
+    # compute similarity (small epsilon to avoid dividing by 0)
+    similarity = np.dot(u_flatten, v_flatten) / (u_norm * v_norm + eps)
+
+    return similarity
