@@ -13,6 +13,6 @@ test_info["tokens"] = test_info["body"].apply(lambda body: " ".join(create_simpl
 
 # write into files
 print("Write into csv files...")
-training_info.to_csv("../data/training_info_with_tokens.csv", sep=',', index=False)
-test_info.to_csv("../data/test_info_with_tokens.csv", sep=',', index=False)
+training_info.to_csv("../data/training_info.csv", sep=',', index=False)
+test_info.to_csv("../data/test_info.csv", sep=',', index=False)
 print("Preprocessing done.")
