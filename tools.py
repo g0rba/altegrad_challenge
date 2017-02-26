@@ -1,7 +1,7 @@
 import time
 import pandas as pd
 import numpy as np
-from collections import Counter
+from collections import Counter, defaultdict
 import operator
 
 
@@ -42,9 +42,6 @@ def create_address_books(training, training_info):
         ids = row[1:][0].split(' ')
         emails_ids_per_sender[sender] = ids
 
-    # save all unique sender names
-    all_senders = emails_ids_per_sender.keys()
-
     # create address book with frequency information for each user
     address_books = {}
     for sender, email_ids_sender in emails_ids_per_sender.items():
@@ -78,3 +75,27 @@ def cosine_similarity(u, v, eps=1e-10):
     similarity = np.dot(u_flatten, v_flatten) / (u_norm * v_norm + eps)
 
     return similarity
+
+
+def create_dictionary_mids(training, training_info):
+    """ Create a dictionary of the message ids for each couple (sender, recipient) """
+    # convert training set to dictionary
+    emails_ids_per_sender = {}
+    for index, series in training.iterrows():
+        row = series.tolist()
+        sender = row[0]
+        ids = row[1:][0].split(' ')
+        emails_ids_per_sender[sender] = ids
+
+    # create the dictionary
+    mids_sender_recipient = defaultdict(list)
+    # iterate over the senders
+    for sender, email_ids_sender in emails_ids_per_sender.items():
+        # for each email sent by the sender, retrieve the recipients
+        for mid in email_ids_sender:
+            recipients = training_info[training_info["mid"] == int(mid)]["recipients"]
+            # for each recipient, append current message id to the list of messages ids for the key (sender,recipient)
+            for recipient in recipients.values[0].split(' '):
+                mids_sender_recipient[(sender, recipient)].append(int(mid))
+
+    return mids_sender_recipient
