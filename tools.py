@@ -11,6 +11,11 @@ def load_data(path_to_data="../data/"):
     test = pd.read_csv(path_to_data + 'test_set.csv', sep=',', header=0)
     test_info = pd.read_csv(path_to_data + 'test_info.csv', sep=',', header=0)
 
+    # emails with empty list of tokens are loaded as np.nan
+    # replace them by an empty string
+    training_info.fillna('', inplace=True)
+    test_info.fillna('', inplace=True)
+
     return training, training_info, test, test_info
 
 
