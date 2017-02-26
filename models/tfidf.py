@@ -29,7 +29,8 @@ class TfIdfModel(AbstractModel):
             mids_sender = self.training[self.training["sender"] == sender]["mids"].values[0]
             mids_sender = np.array(mids_sender.split(" "), dtype=int)
             mids_sender_series = pd.Series(mids_sender)
-            position_mails_training = self.training_info[self.training_info["mid"].isin(mids_sender)].index
+            position_mails_training = self.training_info[self.training_info["mid"].isin(mids_sender)].index.values
+            tfidf_mails_sender = self.training_matrix[position_mails_training]
 
             # get IDs of the emails for which recipient prediction is needed
             mids_predict = np.array(row[1].split(" "), dtype=int)
@@ -41,12 +42,9 @@ class TfIdfModel(AbstractModel):
                 # get the position of current mail in test_info dataset
                 position_mail_predict = test_info[test_info["mid"] == mid_predict].index[0]
                 tfidf_mail_predict = test_matrix[position_mail_predict]
-                tfidf_mail_predict_array = tfidf_mail_predict.toarray()
 
                 # compute similarities
-                similarities = pd.Series(
-                    [cosine_similarity(tfidf_mail_predict_array, self.training_matrix[position_mail_training].toarray())
-                     for position_mail_training in position_mails_training])
+                similarities = pd.Series(tfidf_mails_sender.dot(tfidf_mail_predict.T).toarray().flatten())
 
                 # loop over sender's address book and for each recipient, find the most similar mail it received
                 scores = []
