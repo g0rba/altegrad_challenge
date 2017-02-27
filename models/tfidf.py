@@ -21,7 +21,7 @@ class TfIdfModel(AbstractModel):
         self.mids_sender_recipient = create_dictionary_mids(training, training_info)
 
     def predict(self, test, test_info):
-        test_matrix = self.tfidf_vectorizer.transform([" ".join(tokens) for tokens in test_info["tokens"]])
+        test_matrix = self.tfidf_vectorizer.transform(test_info["tokens"])
         predictions_per_sender = {}
         for _, row in test.iterrows():
             # retrieve sender attributes
