@@ -13,7 +13,7 @@ frequency_model = FrequencyModel(nb_recipients_to_predict=10)
 n_split = 5
 cross_validation = KFoldCrossValidation(n_split)
 
-for fold_nb, (training_fold, training_info_fold, test_fold, test_info_fold) in enumerate(
+for fold_nb, (training_fold, training_info_fold, test_fold, test_info_fold, y_test_fold) in enumerate(
         cross_validation.split(training, training_info)):
     print("\nFold #%d..." % fold_nb)
 

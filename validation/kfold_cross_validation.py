@@ -44,7 +44,8 @@ class KFoldCrossValidation:
             test_info_fold = training_info[training_info["mid"].isin(flatten_test_mids)]
 
             # remove recipients from test_info_fold
-            test_info_fold = test_info_fold[[column for column in test_info_fold if column != "recipients"]]
+            y_test_fold = pd.Series(test_info_fold["recipients"].values, index=test_info_fold["mid"])
+            del test_info_fold["recipients"]
 
             # yield training and test datasets for current fold
-            yield training_fold, training_info_fold, test_fold, test_info_fold
+            yield training_fold, training_info_fold, test_fold, test_info_fold, y_test_fold
