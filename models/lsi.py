@@ -7,8 +7,9 @@ from gensim.corpora import dictionary
 import os.path
 
 class LsiModel(AbstractModel):
-    def __init__(self, nb_recipients_to_predict=10):
+    def __init__(self, nb_recipients_to_predict=10, use_pretrained_model=False):
         self.nb_recipients_to_predict = nb_recipients_to_predict
+        self.use_pretrained_model = use_pretrained_model
 
     def fit(self, training, training_info):
         # store training sets
@@ -22,7 +23,7 @@ class LsiModel(AbstractModel):
         print("creating train corpus")
         train_corpus = [train_my_dict.doc2bow(token) for token in train_tokens]
         print("training Lsi model")
-        if os.path.isfile('../temp/model.lsi'): 
+        if os.path.isfile('../temp/model.lsi') and self.use_pretrained_model: 
             self.lsi = models.LsiModel.load('../temp/model.lsi')
         else:
             self.lsi = models.LsiModel(train_corpus, id2word=train_my_dict, num_topics=500)
@@ -47,9 +48,7 @@ class LsiModel(AbstractModel):
         
         print("prediction per sender")
         predictions_per_sender = {}
-        nb_done = 0
-        for _, row in test.iterrows():
-            nb_done += 1
+        for nb_done, row in test.iterrows():
             print("Progression: %f"%(nb_done/len(test)))
             # retrieve sender attributes
             sender = row[0]
