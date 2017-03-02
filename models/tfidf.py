@@ -6,13 +6,14 @@ import pandas as pd
 
 
 class TfIdfModel(AbstractModel):
-    def __init__(self, nb_recipients_to_predict=10, use_customed_tokens=True, agg_func='max', ngram_max=2):
+    def __init__(self, nb_recipients_to_predict=10, use_customed_tokens=True, agg_func='max', ngram_max=2, verbose=1):
         """ Constructor of TfIdfModel
 
         :param nb_recipients_to_predict: number of recipients to predict (10 by default)
         :param use_customed_tokens: boolean to specify whether customed tokens has to be used. If false, sklearn.TfidfVectorizer tokenization is used. (True by default)
         :param agg_function: function to use when aggregating the tfidf representations of emails ('max' or 'mean')
         :param ngram_max: max size of ngram to consider (2 by default)
+        :param verbose: integers to control the verbosity (0 for silent mode, 1 by default)
         """
         AbstractModel.__init__(self, nb_recipients_to_predict)
         self.use_customed_tokens = use_customed_tokens
@@ -33,6 +34,9 @@ class TfIdfModel(AbstractModel):
         self.mids_sender_recipient = None
 
     def fit(self, training, training_info):
+        if self.verbose:
+            print("Start fitting model %s..." % self.__class__.__name__)
+
         # store training sets
         self.training = training
         self.training_info = training_info
@@ -47,13 +51,17 @@ class TfIdfModel(AbstractModel):
         self.mids_sender_recipient = create_dictionary_mids(training, training_info)
 
     def predict(self, test, test_info):
+        if self.verbose:
+            print("Start making predictions in model %s..." % self.__class__.__name__)
+
         if self.use_customed_tokens:
             test_matrix = self.tfidf_vectorizer.transform(test_info["tokens"])
         else:
             test_matrix = self.tfidf_vectorizer.transform(test_info["body"])
 
         predictions_per_sender = {}
-        for _, row in test.iterrows():
+        nb_senders = len(test)
+        for idx, row in test.iterrows():
             # retrieve sender attributes
             sender = row[0]
             mids_sender = self.training[self.training["sender"] == sender]["mids"].values[0]
@@ -90,4 +98,8 @@ class TfIdfModel(AbstractModel):
 
             predictions_per_sender[sender] = [mids_predict, tfidf_preds]
 
+            if idx % 9 == 0 and self.verbose:
+                print(" -> %d/%d predictions completed" % (idx + 1, nb_senders))
+
+        print("\nPredictions are all completed !")
         return predictions_per_sender

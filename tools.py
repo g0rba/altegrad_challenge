@@ -19,7 +19,7 @@ def load_data(path_to_data="../data/"):
     return training, training_info, test, test_info
 
 
-def create_submission(predictions_per_sender, folder="../results", file_name=None):
+def create_submission(predictions_per_sender, folder="../results", file_name=None, verbose=1):
     """ Create the submission file from a dictionary of predictions
 
     predictions_per_sender: dictionary of predictions {<email of sender>: <list of 10 email recipients>}
@@ -36,6 +36,8 @@ def create_submission(predictions_per_sender, folder="../results", file_name=Non
             for index, my_preds in enumerate(predictions):
                 s_to_write = str(ids[index]) + ',' + ' '.join(my_preds) + '\n'
                 my_file.write(s_to_write.encode())
+
+    if verbose: print("\nSubmission successfully saved in '%s'" % file_name)
 
 
 def create_address_books(training, training_info):
