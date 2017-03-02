@@ -4,7 +4,7 @@ from tools import create_address_books
 
 class FrequencyModel(AbstractModel):
     def __init__(self, nb_recipients_to_predict=10):
-        self.nb_recipients_to_predict = nb_recipients_to_predict
+        AbstractModel.__init__(self, nb_recipients_to_predict)
         self.address_books = None
 
     def fit(self, training, training_info):
