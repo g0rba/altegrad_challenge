@@ -24,10 +24,10 @@ class KFoldCrossValidation:
             max_percentage = percentages[fold_nb + 1]
 
             # retrieve mids for training and test datasets
-            training_mids = total_mids.apply(
+            test_mids = total_mids.apply(
                 lambda mids: mids[np.floor(min_percentage * len(mids)).astype(int): np.floor(
                     max_percentage * len(mids)).astype(int)])
-            test_mids = total_mids.apply(
+            training_mids = total_mids.apply(
                 lambda mids: np.concatenate([mids[:np.floor(min_percentage * len(mids)).astype(int)],
                                              mids[np.floor(max_percentage * len(mids)).astype(int):]]).tolist())
 
@@ -42,6 +42,10 @@ class KFoldCrossValidation:
             # create training_info_fold and test_info_fold, by slicing original training_info
             training_info_fold = training_info[training_info["mid"].isin(flatten_training_mids)]
             test_info_fold = training_info[training_info["mid"].isin(flatten_test_mids)]
+
+            # reset index of training_info_fold, test_info_fold
+            training_info_fold.reset_index(inplace=True, drop=True)
+            test_info_fold.reset_index(inplace=True, drop=True)
 
             # remove recipients from test_info_fold
             y_test_fold = pd.Series(test_info_fold["recipients"].values, index=test_info_fold["mid"])
