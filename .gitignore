@@ -90,3 +90,8 @@ ENV/
 
 # pycharm stuff
 .idea
+
+# data repositories
+data/*
+results/*
+glove/*
