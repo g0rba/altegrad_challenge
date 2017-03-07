@@ -1,7 +1,6 @@
 from .abstract_model import AbstractModel
 from tools import create_address_books, create_dictionary_mids
 import numpy as np
-import pandas as pd
 from gensim import models, similarities
 from gensim.corpora import dictionary
 import os.path
@@ -23,11 +22,11 @@ class LsiModel(AbstractModel):
         print("creating train corpus")
         train_corpus = [train_my_dict.doc2bow(token) for token in train_tokens]
         print("training Lsi model")
-        if os.path.isfile('../temp/model.lsi') and self.use_pretrained_model: 
-            self.lsi = models.LsiModel.load('../temp/model.lsi')
+        if os.path.isfile('temp/model.lsi') and self.use_pretrained_model:
+            self.lsi = models.LsiModel.load('temp/model.lsi')
         else:
             self.lsi = models.LsiModel(train_corpus, id2word=train_my_dict, num_topics=500)
-            self.lsi.save('../temp/model.lsi')
+            self.lsi.save('temp/model.lsi')
         print("creating train Lsi matrix")
         self.lsi_train_matrix = np.array([self.lsi[document] for document in train_corpus])
         

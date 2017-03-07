@@ -1,7 +1,6 @@
 from .abstract_model import AbstractModel
 from tools import create_address_books, create_dictionary_mids
 import numpy as np
-import pandas as pd
 from gensim import models, similarities
 from gensim.corpora import dictionary
 import os.path
@@ -23,11 +22,11 @@ class LdaModel(AbstractModel):
         print("creating train corpus")
         train_corpus = [train_my_dict.doc2bow(token) for token in train_tokens]
         print("training Lda model")
-        if os.path.isfile('../temp/model.lda') and self.use_pretrained_model: 
-            self.lda = models.LdaModel.load('../temp/model.lda')
+        if os.path.isfile('temp/model.lda') and self.use_pretrained_model:
+            self.lda = models.LdaModel.load('temp/model.lda')
         else:
             self.lda = models.LdaModel(train_corpus, id2word=train_my_dict, num_topics=100)
-            self.lda.save('../temp/model.lda')
+            self.lda.save('temp/model.lda')
         print("creating train Lda matrix")
         self.lda_train_matrix = np.array([self.lda[document] for document in train_corpus])
         
