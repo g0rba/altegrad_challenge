@@ -22,11 +22,11 @@ class HdpModel(AbstractModel):
         print("creating train corpus")
         train_corpus = [train_my_dict.doc2bow(token) for token in train_tokens]
         print("training Hdp model")
-        if os.path.isfile('../temp/model.hdp') and self.use_pretrained_model: 
-            self.hdp = models.HdpModel.load('../temp/model.hdp')
+        if os.path.isfile('temp/model.hdp') and self.use_pretrained_model:
+            self.hdp = models.HdpModel.load('temp/model.hdp')
         else:
             self.hdp = models.HdpModel(train_corpus, id2word=train_my_dict)
-            self.hdp.save('../temp/model.hdp')
+            self.hdp.save('temp/model.hdp')
         print("creating train Hdp matrix")
         self.hdp_train_matrix = np.array([self.hdp[document] for document in train_corpus])
         
