@@ -5,7 +5,28 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
 
-def create_simple_tokens(text, remove_stopwords=True, pos_filtering=False, stemming=True):
+def clean_text_regex(text):
+    """ Tool used to clean a text by applying standard regex """
+    text = re.sub(r"[^A-Za-z0-9(),!?\'\`]", " ", text)
+    text = re.sub(r"\'s", " \'s", text)
+    text = re.sub(r"\'ve", " \'ve", text)
+    text = re.sub(r"n\'t", " n\'t", text)
+    text = re.sub(r"\'re", " \'re", text)
+    text = re.sub(r"\'d", " \'d", text)
+    text = re.sub(r"\'ll", " \'ll", text)
+    text = re.sub(r",", " , ", text)
+    text = re.sub(r"!", " ! ", text)
+    text = re.sub(r"\(", " ( ", text)
+    text = re.sub(r"\)", " ) ", text)
+    text = re.sub(r"\?", " ? ", text)
+    text = re.sub(r"\s{2,}", " ", text)
+    return text
+
+
+def create_simple_tokens(text, remove_stopwords=True, pos_filtering=False, stemming=True, use_regex=True):
+    if use_regex:
+        text = clean_text_regex(text)
+
     punct = string.punctuation.replace('-', '')
 
     # convert to lower case

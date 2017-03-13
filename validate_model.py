@@ -4,7 +4,7 @@ from models import FrequencyModel, TfIdfModel
 from validation import KFoldCrossValidation, MAPn
 
 # load data
-path_to_data = "../data/"
+path_to_data = "data/"
 training, training_info, test, test_info = load_data(path_to_data)
 
 # create model

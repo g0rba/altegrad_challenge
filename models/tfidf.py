@@ -22,6 +22,8 @@ class TfIdfModel(AbstractModel):
             self.agg_func = np.max
         elif agg_func == 'mean':
             self.agg_func = np.mean
+        elif agg_func == 'sum':
+            self.agg_func = np.sum
         else:
             raise ValueError("In constructor of TfIdfModel, agg_func should be either 'max' or 'mean'.")
 
